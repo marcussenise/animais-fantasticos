@@ -1,16 +1,22 @@
-export default function initScrollSmooth() {
-  const linksInternos = document.querySelectorAll('[data-menu="suave"] a[href^="#"]');
+export default class ScrollSmooth {
+  constructor(links, options) {
+    this.linksInternos = document.querySelectorAll(links);
+    if (options === undefined) {
+      this.options = { behavior: 'smooth', block: 'start' };
+    } else {
+      this.options = options;
+    }
+    this.scrollToSection = this.scrollToSection.bind(this);
+  }
 
-  function scrollToSection(event) {
+  scrollToSection(event) {
     event.preventDefault();
     const href = event.currentTarget.getAttribute('href');
     const section = document.querySelector(href);
+
     if (section) {
       // const topo = section.offsetTop;
-      section.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
+      section.scrollIntoView(this.options);
     }
     // forma alternativa
     // windows.scrollTo({
@@ -18,7 +24,17 @@ export default function initScrollSmooth() {
     //     behavior: 'smooth'
     // });
   }
-  linksInternos.forEach((e) => {
-    e.addEventListener('click', scrollToSection);
-  });
+
+  addLinkEvent() {
+    this.linksInternos.forEach((e) => {
+      e.addEventListener('click', this.scrollToSection);
+    });
+  }
+
+  init() {
+    if (this.linksInternos.length) {
+      this.addLinkEvent();
+    }
+    return this;
+  }
 }
